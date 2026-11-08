@@ -1,0 +1,20 @@
+# Installs the formula from this tap on a GitHub Mac and runs its test.
+name: test
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  formula:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: brew tap khmuhtadin/sapu "$GITHUB_WORKSPACE"
+      - run: brew style khmuhtadin/sapu
+      - run: brew audit --strict --online khmuhtadin/sapu/sapu
+      - run: brew install khmuhtadin/sapu/sapu
+      - run: brew test khmuhtadin/sapu/sapu
+      - run: sapu version
