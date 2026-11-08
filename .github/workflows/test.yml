@@ -1,4 +1,5 @@
-# Installs the formula from this tap on a GitHub Mac and runs its test.
+# Installs the formula from this tap on a GitHub Mac, the way a user would,
+# and runs its test and audit.
 name: test
 on:
   push:
@@ -12,9 +13,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - run: brew tap khmuhtadin/sapu "$GITHUB_WORKSPACE"
-      - run: brew style khmuhtadin/sapu
-      - run: brew audit --strict --online khmuhtadin/sapu/sapu
-      - run: brew install khmuhtadin/sapu/sapu
-      - run: brew test khmuhtadin/sapu/sapu
+      - name: Install as a user would
+        run: |
+          brew tap khmuhtadin/sapu "$GITHUB_WORKSPACE"
+          brew install khmuhtadin/sapu/sapu
       - run: sapu version
+      - run: brew test khmuhtadin/sapu/sapu
+      - name: Style and audit
+        run: |
+          brew trust --tap khmuhtadin/sapu
+          brew style khmuhtadin/sapu
+          brew audit --strict --online khmuhtadin/sapu/sapu
